@@ -1,0 +1,82 @@
+<h1> New User </h1>	
+
+
+<div ng-controller="TodoCtrl">
+	<form name="myForm">
+  		<div for="userid"><b>UserID(this will be used to identify you)</b></div>
+  		<input type="text" name="userid" id="userid" ng-model="userForm.name">
+  		<br>
+
+  		<div for="email"><b>Email Address</b></div>
+  		<input type="email" name="email" id="email" ng-model="userForm.email">
+  		<br>
+
+
+  		<div for="phone"><b>Phone Number</b></div>
+  		<input type="text" name="phone" id="phone" ng-model="userForm.phone">
+  		<br>
+  	  <span> Added Classes  --- User ID</span><br>
+      <select ng-model="selectedClass" ng-options="c.name for c in remainingClasses()"></select>
+      <input ng-model="user_id" type="text">
+      <button ng-click="addClass()"> Add Class </button>
+
+       <ul>
+      		<li ng-repeat="_class in pickedClasses">{{_class.name}}</li>
+       </ul>
+
+       <button ng-click="signup()"> Sign up </button>
+	</form>
+</div>
+
+
+
+
+<script>
+
+
+
+function TodoCtrl($scope, $http, $window) {
+	$http.get('/Class/GetClasses').then(function(response){
+		$scope.pickedClasses = [];
+		$scope.user_id = "";
+
+		$scope.userForm = {
+			name : "",
+			email : "",
+			phone : "",
+			classids : [],
+			userids : []
+		}
+
+		$scope.remainingClasses = function(){
+			return response.data.filter(function(element){
+				return $scope.pickedClasses.indexOf(element) < 0;
+			})
+		};
+
+		$scope.selectedClass = $scope.remainingClasses()[0];
+
+		$scope.addClass = function(){
+			$scope.pickedClasses.push($scope.selectedClass);
+			$scope.userForm.classids.push($scope.selectedClass.courseid);
+			$scope.userForm.userids.push($scope.user_id);
+			$scope.selectedClass = $scope.remainingClasses()[0];
+		}
+
+
+		$scope.signup = function(){
+			$.post('/Users/AddUser/', $scope.userForm, function(data){
+				$window.location.href = '/Users/View/' + $scope.userForm.name;
+			})
+		}
+
+
+	});
+
+
+
+
+ 
+}
+</script>
+

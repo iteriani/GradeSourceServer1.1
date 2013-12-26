@@ -1,0 +1,40 @@
+
+<div class="well" id="users">
+	<ul id = "classes"> </ul>
+</div>
+
+<script>
+var url = window.location.href;
+url = url.split("/");
+var userid = url[5];
+
+$.get('/Users/GetUserData/'+userid, function(data){
+	var User = JSON.parse(data);
+	User[0].classes.forEach(function(_class){
+		$("#classes").append("<li><a href='#tabs-"+_class.userid+"'>"+ _class.classid + "</a></li>");
+		$("#users").append("<div id = 'tabs-"+_class.userid + "'><table class='table' id ='"+_class.classid+"'></table></div>")
+		$("#"+_class.classid).append("<thead><tr><td>Assignment</td><td> Score</td><td>Max</td><td>Average</td><td>Std</td><td>Rank</td></tr></thead>");
+		$.get('/Grades/ReadUser/' + _class.classid + '/' + _class.userid, function(data){
+			$.get('http://localhost:8000/Grades/ReadUser/' + _class.classid + '/0/', function(idealUser){
+				$.get('http://localhost:8000/Grades/GetClassStats/' + _class.classid + '/'+_class.userid, function(classStats){
+					var max_class = JSON.parse(idealUser);
+					var stats = JSON.parse(classStats);
+					var classes = JSON.parse(data);
+					console.log(classes, stats, max_class)
+					$.each(classes[0].Grades, function(index, element){
+						$("#"+_class.classid).append("<tr><td>"+element.subject + "</td>"+
+						"<td><b>" + element.grade + "</b></td>"+
+						"<td>" + max_class[0].Grades[index].grade + "</td>"+
+						"<td><b>"+ stats[index].mean.toFixed(2)+ "</b></td>"+
+						"<td>"+ stats[index].deviation.toFixed(2)+ "</td>"+
+						"<td>" + stats[index].rank + "</td>" + 
+						"</tr>");
+							})				
+					});
+				});
+		});
+	})
+$("#users").tabs();
+
+})
+</script>

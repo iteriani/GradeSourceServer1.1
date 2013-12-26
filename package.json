@@ -1,0 +1,12 @@
+{
+  "name": "GradeSourceServer",
+  "description": "Server version of GradeSource specialized towards users.",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "mongodb": "*",
+    "mongoose": "*",
+    "router" : "*",
+    "request" : "*"
+  }
+}

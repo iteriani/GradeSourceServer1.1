@@ -1,0 +1,38 @@
+
+<div ng-controller="ClassCRTL">
+    	<span><h1>Request New Class</h1></span>
+    	<div> Website address </div>
+    	<input type="url" ng-model="urlRequest"><br>
+    	<button ng-click="validate()"> Check Status</button>
+    	{{requestStatus}}
+</div>
+
+
+
+
+<script>
+
+
+
+function ClassCRTL($scope, $http, $window) {
+	
+
+		$scope.urlRequest = "";	
+		$scope.requestStatus = "Pending";
+
+		$scope.validate = function(){
+			$.post('/Class/CheckUrl', {url : $scope.urlRequest}).then(function(resp){
+				$scope.$apply(function(){
+				if(resp == "true"){
+					$scope.requestStatus = "Approved! The class has been added and will be updated in 15-30 minutes.";
+				}else{
+					$scope.requestStatus = "The link is either invalid or has already been added to our database.";
+				}
+				});
+
+			});
+		}
+ 
+}
+</script>
+

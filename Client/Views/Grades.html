@@ -1,0 +1,50 @@
+<div>
+	<div id="classname"></div>
+	<div class="well">
+	<table  class="table">
+		<thead>
+			<tr>
+				<td> Assignment Name </td>
+				<td>Current Grade</td>
+				<td>Max</td>
+				<td> Average </td>
+				<td>Std. Deviation</td>
+			</tr>
+		</thead>
+		<tbody id = "grades">
+		</tbody>
+	</table>
+</div>
+</div>
+
+<script>
+console.log(window.location.href);
+var url = window.location.href;
+url = url.split("/");
+var classid = url[5];
+var userid = url[6];
+
+
+$.get('http://localhost:8000/Grades/ReadUser/' + classid + '/' + userid + '/', function(user){
+	$.get('http://localhost:8000/Grades/ReadUser/' + classid + '/0/', function(idealUser){
+		$.get('http://localhost:8000/Grades/GetClassStats/' + classid + '/', function(classStats){
+			var max_class = JSON.parse(idealUser);
+			var classuser = JSON.parse(user);
+			var stats = JSON.parse(classStats);
+			var _class = classuser[0];
+			$("#classname").text(_class.ClassID + " for user " + _class.ID);
+			$.each(_class.Grades, function(index, element){
+		
+				$("#grades").append("<tr><td>"+element.subject + "</td>"+
+					"<td><b>" + element.grade + "</b></td>"+
+					"<td>" + max_class[0].Grades[index].grade + "</td>"+
+					"<td><b>"+ stats[index].mean.toFixed(2)+ "</b></td>"+
+					"<td>"+ stats[index].deviation.toFixed(2)+ "</td>"+
+					"</tr>");
+			})				
+		});
+
+	});
+
+})
+</script>
