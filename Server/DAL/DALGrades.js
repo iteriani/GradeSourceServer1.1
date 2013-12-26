@@ -25,12 +25,6 @@ function DALGrades(){
 			Grades : [{subject : String, grade : String}],
 		});
 
-	var ClassSchema = new Schema({
-		name : String,	
-		courseid : String,
-		link : String
-	});
-
 
 
 	try{
@@ -39,11 +33,6 @@ function DALGrades(){
 		var	GradeModel = mongoose.model("Grade", GradeSchema);
 	}
 
-	try{
-		var ClassModel = mongoose.model("Class");
-	}catch(e){
-		var	ClassModel = mongoose.model("Class", ClassSchema);
-	}
 
 
 	self.AddGrade = function(Grade, callback){
@@ -85,13 +74,6 @@ function DALGrades(){
 		});
 	}
 
-	self.GetClasses = function(callback){
-		ClassModel.find({}, function(err, data){
-			for(var i = 0; i < data.length; i++)
-				data[i] = data[i].toObject();
-			callback(data)
-	});
-	}
 
 
 }
